@@ -3,8 +3,8 @@ name = "relay-sr201"
 version = "0.1.0"
 authors = ["Kyle Manna <kyle@kylemanna.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "SR-201 Network Relay Controller"
+license = "MIT"
 
 [dependencies]
 structopt = { version = "0.3" }
