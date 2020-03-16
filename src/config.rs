@@ -11,17 +11,53 @@ pub struct Config {
     check_resp: bool,
 }
 
-static CONFIG_KEYS: [&str; 10] = [
-    "ipv4",
-    "netmask",
-    "gateway",
-    "",
-    "power_persist",
-    "version",
-    "serial",
-    "dns",
-    "cloud_server",
-    "cloud_enabled",
+#[derive(Debug)]
+struct ConfigOpt {
+    name: &'static str,
+    id_set: char,
+}
+
+static CONFIG_KEYS: [ConfigOpt; 10] = [
+    ConfigOpt {
+        name: "ipv4",
+        id_set: '2',
+    },
+    ConfigOpt {
+        name: "netmask",
+        id_set: '3',
+    },
+    ConfigOpt {
+        name: "gateway",
+        id_set: '4',
+    },
+    ConfigOpt {
+        name: "",
+        id_set: '5',
+    },
+    ConfigOpt {
+        name: "power_persist",
+        id_set: '6',
+    },
+    ConfigOpt {
+        name: "version",
+        id_set: '7',
+    },
+    ConfigOpt {
+        name: "serial",
+        id_set: ' ',
+    },
+    ConfigOpt {
+        name: "dns",
+        id_set: '8',
+    },
+    ConfigOpt {
+        name: "cloud_server",
+        id_set: '9',
+    },
+    ConfigOpt {
+        name: "cloud_enabled",
+        id_set: 'A',
+    },
 ];
 
 impl Config {
@@ -82,11 +118,10 @@ impl Config {
 
         let hash: HashMap<&str, String> = CONFIG_KEYS
             .iter()
-            .cloned()
             .zip(values)
             .filter_map(|(k, v)| {
-                if k.len() > 0 {
-                    Some((k, String::from(v)))
+                if k.name.len() > 0 {
+                    Some((k.name, String::from(v)))
                 } else {
                     None
                 }
@@ -94,5 +129,20 @@ impl Config {
             .collect();
 
         Ok(hash)
+    }
+
+    pub fn set_config(&mut self, key: &str, value: &str) -> Result<()> {
+        let config_opt = CONFIG_KEYS
+            .iter()
+            .find(|&c| key == c.name)
+            .ok_or(make_generic("Key not found"))?;
+
+        let resp = self.cmd(&format!("#{}2222,{};", config_opt.id_set, value))?;
+
+        match &resp as &str {
+            "OK" => Ok(()),
+            "ERR" => Err(make_generic("Device replied with error")),
+            _ => Err(make_generic(&format!("Unknown response: {}", resp))),
+        }
     }
 }
