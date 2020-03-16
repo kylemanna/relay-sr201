@@ -5,6 +5,8 @@ authors = ["Kyle Manna <kyle@kylemanna.com>"]
 edition = "2018"
 description = "SR-201 Network Relay Controller"
 license = "MIT"
+homepage = "https://github.com/kylemanna/relay-sr201"
+repository = "https://github.com/kylemanna/relay-sr201"
 
 [dependencies]
 regex = "1"
